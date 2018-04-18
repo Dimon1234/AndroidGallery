@@ -20,7 +20,7 @@ public class TestFetcher {
     private static final String API_KEY = "3396f045a3a5b6a8dfb9a1352416a2bf";
 
 
-    public String getJSONString(String url) throws IOException {
+    private String getJSONString(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder().url(url).build();
         Response response = client.newCall(request).execute();

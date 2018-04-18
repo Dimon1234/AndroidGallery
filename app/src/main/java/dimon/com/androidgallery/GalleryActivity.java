@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -22,6 +25,7 @@ public class GalleryActivity  extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     private RecyclerView recyclerView;
+    private List<GalleryCardItem> cardItems = new ArrayList<>();
     private List<GalleryItem> galleryItemList = new ArrayList<>();
 
     @Override
@@ -29,8 +33,8 @@ public class GalleryActivity  extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.photo_gallery_recycler_view);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        recyclerView = findViewById(R.id.main_recycler_view);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 1));
 
         new FetchItemTask().execute();
         setUpAdapter();
@@ -38,8 +42,58 @@ public class GalleryActivity  extends AppCompatActivity {
 
     private void setUpAdapter()
     {
-        recyclerView.setAdapter(new PhotoAdapter(galleryItemList));
+        recyclerView.setAdapter(new CardViewAdapter(cardItems));
     }
+
+
+    private class CardViewHolder extends RecyclerView.ViewHolder
+    {
+        private GalleryCardItem cardItem;
+
+        public CardViewHolder(View itemView) {
+            super(itemView);
+            cardItem = new GalleryCardItem();
+            cardItem.setCardView((CardView) itemView.findViewById(R.id.card_view));
+            cardItem.setTextView((TextView) itemView.findViewById(R.id.card_title));
+            RecyclerView recyclerView = itemView.findViewById(R.id.photo_gallery_recycler_view);
+            recyclerView.setLayoutManager(new GridLayoutManager(GalleryActivity.this, 3));
+            cardItem.setRecyclerView(recyclerView);
+        }
+
+    }
+    private class CardViewAdapter extends RecyclerView.Adapter<CardViewHolder> {
+
+        private List<GalleryCardItem> list;
+
+        public CardViewAdapter(List<GalleryCardItem> list) {
+            this.list = list;
+        }
+
+        @NonNull
+        @Override
+        public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+            LayoutInflater inflater = LayoutInflater.from(GalleryActivity.this);
+            View view = inflater.inflate(R.layout.card_view_item, parent,  false);
+            return new CardViewHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
+
+            holder.cardItem.getRecyclerView().setAdapter(new PhotoAdapter(galleryItemList.subList(0, 6)));
+        }
+
+        @Override
+        public int getItemCount() {
+            return list.size();
+        }
+
+
+
+    }
+
+
+
 
 
     private class PhotoHolder extends RecyclerView.ViewHolder {
@@ -81,6 +135,10 @@ public class GalleryActivity  extends AppCompatActivity {
         }
     }
 
+
+
+
+
     @SuppressLint("StaticFieldLeak")
     private class FetchItemTask extends AsyncTask<Void,Void, List<GalleryItem>>
     {
@@ -92,7 +150,15 @@ public class GalleryActivity  extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(List<GalleryItem> list) {
+
             galleryItemList = list;
+            for(int i = 0; i < 10; i++)
+            {
+                GalleryCardItem galleryCardItem = new GalleryCardItem();
+                galleryCardItem.setList(list.subList(0,2));
+                cardItems.add(galleryCardItem);
+            }
+
             setUpAdapter();
         }
     }
