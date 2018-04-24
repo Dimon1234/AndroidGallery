@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">AndroidGallery</string>
+    <string name="OAuthURL">https://oauth.yandex.ru/authorize?response_type=token&amp;client_id=5cd4d0b096be49d1b1f533baca3cccd2</string>
+    <string name="callbackURL">https://yx5cd4d0b096be49d1b1f533baca3cccd2.oauth.yandex.ru/auth</string>
+
 </resources>
